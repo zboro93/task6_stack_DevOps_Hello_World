@@ -118,23 +118,10 @@ resource "aws_vpc_security_group_egress_rule" "rule_allow_https_out" {
   to_port           = 443
 }
 
-
-
-resource "tls_private_key" "ssh_key" {
-  algorithm = "RSA"
-}
-
-resource "local_file" "private_key_pem" {
-  content         = tls_private_key.ssh_key.private_key_pem
-  filename        = "MyAWSKey.pem"
-  file_permission = "0600"
-}
-
 resource "aws_key_pair" "deployer" {
-  key_name   = "my_key"
-  public_key = tls_private_key.ssh_key.public_key_openssh
+  key_name   = "MyAWSKey"
+  public_key = file("~/.ssh/MyAWSKey.pub")
 }
-
 
 resource "aws_instance" "app_server" {
   ami                         = data.aws_ami.ubuntu.id
