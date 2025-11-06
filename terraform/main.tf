@@ -120,7 +120,7 @@ resource "aws_vpc_security_group_egress_rule" "rule_allow_https_out" {
 
 resource "aws_key_pair" "deployer" {
   key_name   = "MyAWSKey"
-  public_key = file("~/.ssh/MyAWSKey.pub")
+  public_key = file("${path.module}/.ssh/MyAWSKey.pub")
 }
 
 resource "aws_instance" "app_server" {
