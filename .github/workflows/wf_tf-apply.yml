@@ -1,7 +1,7 @@
 name: "Terraform Apply"
 
 on:
-  remove-push:
+  push:
     branches:
     - main
     paths:
