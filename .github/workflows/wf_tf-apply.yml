@@ -1,0 +1,49 @@
+name: "Terraform Apply"
+
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - terraform/**
+    
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+  
+jobs:
+  terraform:
+    name: "Apply Terraform Infra"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./terraform
+        
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Terraform with version
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.13.5
+          
+      - name: Terraform init
+        id: init
+        run: terraform init
+
+      - name: Terraform validate
+        id: validate
+        run: terraform validate
+      
+      - name: terraform apply
+        id: apply
+        run: terraform apply -auto-approve -input=false
+
+      - name: terraform output
+        id: output
+        run: terraform output
