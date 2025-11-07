@@ -1,0 +1,46 @@
+name: "Terraform Destory"
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Type 'confirm' to destory"
+        required: true
+        default: "Not confirmed"
+    
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+  
+jobs:
+  terraform:
+    name: "Destroy Terraform Infra"
+    if: ${{ github.event.inputs.confirm == 'confirm' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./terraform
+        
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Terraform with version
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.13.5
+          
+      - name: Terraform init
+        id: init
+        run: terraform init
+
+      - name: Terraform destroy
+        id: destory
+        run: terraform destroy -auto-approve -input=false
+        
+      - name: Log confirmation
+        run: echo "Destroy confirmed by ${{ github.actor }}"
