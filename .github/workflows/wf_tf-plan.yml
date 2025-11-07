@@ -1,11 +1,6 @@
 name: "Terraform Plan"
 
 on:
-  push:
-    branches:
-    - main
-    paths:
-    - terraform/**
   pull_request: 
     branches:
     - main
@@ -19,7 +14,7 @@ env:
   
 jobs:
   terraform:
-    name: "Terraform Infra Manage"
+    name: "Plan Terraform Infra"
     runs-on: ubuntu-latest
     permissions:
       contents: read
